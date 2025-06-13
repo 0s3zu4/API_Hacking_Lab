@@ -1,0 +1,22 @@
+
+---
+
+## ✅ **.gitignore**
+```gitignore
+# Backup and temp files
+*~
+*.swp
+*.swo
+*.bak
+
+# Log files
+*.log
+api_tools_installer.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Archives
+*.tar.gz
+*.zip
