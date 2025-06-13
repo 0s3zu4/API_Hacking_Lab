@@ -16,11 +16,11 @@ A powerful, automated installer script to set up API penetration testing tools i
 - JWT Tool
 - Kiterunner
 - Arjun
-- SecLists (moved to `/usr/share/wordlists` if found in `/opt`)
-- Hacking-APIs wordlists (moved to `/usr/share/wordlists` if found in `/opt`)
+- SecLists
+- Hacking-APIs wordlists 
 - Sublime Text
 - OWASP ZAP
-- GoSpider (`apt install gospider`)  
+- GoSpider  
 
 ❗ **Note:**  
 Trufflehog is planned for the next update once I finalize a clean install method!
@@ -33,3 +33,31 @@ Trufflehog is planned for the next update once I finalize a clean install method
 ```bash
 git clone https://github.com/yourusername/api-tools-installer.git
 cd api-tools-installer
+chmod +x api_tools_installer.sh
+sudo ./api_tools_installer.sh
+```
+
+📝 Features
+- ✨ Interactive installation — asks if you want to install each tool
+- ✨ Skips tools that are already installed
+- ✨ Moves SecLists and Hacking-APIs wordlists to the right location
+- ✨ Generates a postman.desktop shortcut
+- ✨ Keeps a detailed install log
+- ✨ Designed for Kali Linux / Debian-based systems
+
+🛠 Requirements
+Kali Linux, Debian, or similar
+
+sudo privileges
+
+Internet connection
+
+🤝 Credits
+Tools list inspired by APIsec University API Pentesting Course
+
+Created by: Osezua
+
+📌 Upcoming Updates
+- 🚀 Add Trufflehog clean installer
+- 🚀 Add optional virtualenv support
+- 🚀 Improved error handling
