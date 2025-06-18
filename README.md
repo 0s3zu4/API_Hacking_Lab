@@ -31,10 +31,10 @@ Trufflehog is planned for the next update once I finalize a clean install method
 
 1️⃣ Clone the repository:
 ```bash
-git clone https://github.com/yourusername/api-tools-installer.git
-cd api-tools-installer
-chmod +x api_tools_installer.sh
-sudo ./api_tools_installer.sh
+git clone https://github.com/0s3zu4/API_Hacking_Lab.git
+cd API_Hacking_Lab
+chmod +x API_Hacking_Lab.sh
+sudo ./API_Hacking_Lab.sh
 ```
 
 📝 Features
