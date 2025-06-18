@@ -29,7 +29,7 @@ Trufflehog is planned for the next update once I finalize a clean install method
 
 ## 📦 How to use
 
-1️⃣ Clone the repository:
+Clone the repository:
 ```bash
 git clone https://github.com/0s3zu4/API_Hacking_Lab.git
 cd API_Hacking_Lab
@@ -38,19 +38,15 @@ sudo ./API_Hacking_Lab.sh
 ```
 
 📝 Features
-- ✨ Interactive installation — asks if you want to install each tool
-- ✨ Skips tools that are already installed
-- ✨ Moves SecLists and Hacking-APIs wordlists to the right location
-- ✨ Generates a postman.desktop shortcut
-- ✨ Keeps a detailed install log
-- ✨ Designed for Kali Linux / Debian-based systems
+- Interactive installation — asks if you want to install each tool
+- Skips tools that are already installed
+- Moves SecLists and Hacking-APIs wordlists to the right location
+- Generates a postman.desktop shortcut
+- Keeps a detailed install log
+- Designed for Kali Linux / Debian-based systems
 
 🛠 Requirements
 Kali Linux, Debian, or similar
-
-sudo privileges
-
-Internet connection
 
 🤝 Credits
 Tools list inspired by APIsec University API Pentesting Course
@@ -58,6 +54,5 @@ Tools list inspired by APIsec University API Pentesting Course
 Created by: Osezua
 
 📌 Upcoming Updates
-- 🚀 Add Trufflehog clean installer
-- 🚀 Add optional virtualenv support
-- 🚀 Improved error handling
+- Add Trufflehog clean installer
+-  Add optional virtualenv support
