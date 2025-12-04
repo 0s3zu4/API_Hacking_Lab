@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# API Tools Installer v1.0.4 by d3f4ult
+# API Tools Installer v1.0.4 by 0s3zu4
 
 LOG_FILE="/var/log/api_tools_installer.log"
 SKIP_COUNT=0
@@ -20,7 +20,7 @@ echo -e "${GREEN}
  / ___ |/ /_/ / __// ___ |/ /_/ / / (__  ) / / /_/ /  __/
 /_/  |_/_____/_/  /_/  |_|\\__,_/_/_/____(_)_/ .___/\\___/ 
                                           /_/            
-API Tools Installer v1.2.3 by Osezua
+API Tools Installer v1.2.3 by 0s3zu4
 ${NC}" | tee -a $LOG_FILE
 
 function ask_continue() {
@@ -65,8 +65,8 @@ function install_docker() {
     ask_continue "Docker" || return
 
     echo -e "${GREEN}Installing Docker...${NC}" | tee -a $LOG_FILE
-    $ sudo apt install docker.io -y
-    $ sudo apt-get install docker.io docker-compose tee -a $LOG_FILE
+    sudo apt-get update | tee -a $LOG_FILE
+    sudo apt-get install -y docker.io docker-compose | tee -a $LOG_FILE
 }
 
 function install_postman() {
@@ -156,8 +156,19 @@ function install_jwt_tool() {
 
     ask_continue "JWT Tool" || return
 
-    git clone https://github.com/ticarpi/jwt_tool /opt/jwt_tool | tee -a $LOG_FILE
-    sudo ln -sf /opt/jwt_tool/jwt_tool.py /usr/bin/jwt_tool
+    # Clone into a temp dir then move with sudo to avoid permission issues
+    tmpdir=$(mktemp -d)
+    if git clone https://github.com/ticarpi/jwt_tool "$tmpdir/jwt_tool" 2>&1 | tee -a $LOG_FILE; then
+        sudo mv "$tmpdir/jwt_tool" /opt/jwt_tool
+        sudo ln -sf /opt/jwt_tool/jwt_tool.py /usr/bin/jwt_tool
+        sudo chmod +x /usr/bin/jwt_tool || true
+        rm -rf "$tmpdir"
+        echo -e "${GREEN}JWT Tool installed to /opt/jwt_tool.${NC}" | tee -a $LOG_FILE
+    else
+        echo -e "${RED}Failed to clone JWT Tool. Check network or repository URL.${NC}" | tee -a $LOG_FILE
+        rm -rf "$tmpdir"
+        return 1
+    fi
 }
 
 function install_kiterunner() {
@@ -168,10 +179,51 @@ function install_kiterunner() {
 
     ask_continue "Kiterunner" || return
 
-    curl -L https://github.com/assetnote/kiterunner/releases/latest/download/kiterunner_linux_amd64.tar.gz -o kr.tar.gz
-    tar -xzf kr.tar.gz
-    sudo mv kr /usr/bin/
-    rm -f kr.tar.gz
+    echo -e "${GREEN}Installing Kiterunner from source...${NC}" | tee -a $LOG_FILE
+
+    if ! command -v git >/dev/null 2>&1; then
+        echo -e "${RED}Git is not installed, but is required to clone the Kiterunner repository.${NC}" | tee -a $LOG_FILE
+        return 1
+    fi
+
+    if ! command -v go >/dev/null 2>&1; then
+        echo -e "${RED}Go is not installed, but is required to build Kiterunner. Please install Go and rerun this step.${NC}" | tee -a $LOG_FILE
+        return 1
+    fi
+
+    if ! command -v make >/dev/null 2>&1; then
+        echo -e "${YELLOW}'make' not found. Installing build-essential so we can build Kiterunner...${NC}" | tee -a $LOG_FILE
+        sudo apt-get update | tee -a $LOG_FILE
+        sudo apt-get install -y build-essential | tee -a $LOG_FILE
+    fi
+
+    tmpdir=$(mktemp -d)
+    if git clone https://github.com/assetnote/kiterunner.git "$tmpdir/kiterunner" 2>&1 | tee -a $LOG_FILE; then
+        cd "$tmpdir/kiterunner" || { echo -e "${RED}Failed to enter Kiterunner source directory.${NC}" | tee -a $LOG_FILE; rm -rf "$tmpdir"; return 1; }
+
+        if make build 2>&1 | tee -a $LOG_FILE; then
+            if [[ -f "dist/kr" ]]; then
+                sudo mv dist/kr /usr/bin/kr
+                sudo chmod +x /usr/bin/kr
+                echo -e "${GREEN}Kiterunner built and installed to /usr/bin/kr.${NC}" | tee -a $LOG_FILE
+            else
+                echo -e "${RED}Kiterunner build completed but 'dist/kr' binary not found.${NC}" | tee -a $LOG_FILE
+                rm -rf "$tmpdir"
+                return 1
+            fi
+        else
+            echo -e "${RED}Failed to build Kiterunner using make build.${NC}" | tee -a $LOG_FILE
+            rm -rf "$tmpdir"
+            return 1
+        fi
+    else
+        echo -e "${RED}Failed to clone Kiterunner repository. Check your network connection or GitHub availability.${NC}" | tee -a $LOG_FILE
+        rm -rf "$tmpdir"
+        return 1
+    fi
+
+    cd - >/dev/null 2>&1 || true
+    rm -rf "$tmpdir"
 }
 
 function install_arjun() {
@@ -183,6 +235,17 @@ function install_arjun() {
     ask_continue "Arjun" || return
 
     pip3 install arjun 2>&1 | tee -a $LOG_FILE | { grep "externally-managed-environment" && handle_externally_managed "externally-managed-environment"; }
+}
+
+function install_trufflehog() {
+    if command -v trufflehog >/dev/null 2>&1; then
+        echo -e "${GREEN}TruffleHog already installed. Skipping.${NC}" | tee -a $LOG_FILE
+        return
+    fi
+
+    ask_continue "TruffleHog" || return
+
+    pip3 install truffleHog 2>&1 | tee -a $LOG_FILE | { grep "externally-managed-environment" && handle_externally_managed "externally-managed-environment"; }
 }
 
 function move_wordlists() {
